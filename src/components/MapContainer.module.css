@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    text-align: center;
+}
+
+
+.leaflet-container {
+    width: 70vw;
+    height: 100vh;
+}
+
+.sidebar {
+    box-sizing: border-box;
+    padding: 0;
+    width: 30vw;
+    padding-top: 30px;
+}
+
+.sidebar-title {
+    margin-left: 27px;
+}
+
+.sidebar h2,
+.sidebar p,
+.sidebar ul {
+    text-align: left;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+}
+
+.sidebar button {
+    width: 100%;
+    font-weight: bold;
+    padding: .8em 1em;
+}
+
+
+.select-map {
+    position: relative;
+    top: 10px;
+    left: 350px;
+    z-index: 1111;
+}
+
+.layerControl {
+    z-index: 1111;
+}
