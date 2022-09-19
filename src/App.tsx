@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import MapContainerLeaflet from './components/MapContainerLeaflet';
+import MapContainerLeaflet from './components/Map';
 import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();

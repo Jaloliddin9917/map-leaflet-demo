@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 
+
 export class GeoJsonService {
 
     constructor() {
@@ -15,19 +16,40 @@ export class GeoJsonService {
         return data;
     }
 
+    async getState() {
+
+        let state: any = await this.loadJsonFile("states");
+        let names: string[] = [];
+        // let coors: any = [];
+
+        state.map((item: any) => {
+            names.push(item.properties.NAME_1)
+        });
+        // state.map((item: any) => {
+        //     coors.push(item.geometry.coordinates)
+        // });
+
+
+
+        const arr = [names, state];
+        
+        return arr
+
+        
+    }
+
 
     async getStates(stateName: string) {
 
         let states: any = await this.loadJsonFile(stateName);  
 
         let names: string[] = [];
-        let coordinates: any = [];
+        // let coordinates: any = [];
 
         states.map((item : any) => {
             names.push(item.properties.Parliament)
         })
        
-      
  
         const arr = [names, states]
         return arr
