@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Polygon, LayersControl, GeoJSON } from 'react-leaflet';
-import { GeoJsonObject } from 'geojson';
+import { MapContainer, TileLayer, LayersControl, GeoJSON } from 'react-leaflet';
+import L from 'leaflet';
 
 
-
-import './MapContainer.module.css';
+import './Map.module.css';
 import 'leaflet/dist/leaflet.css';
 import "antd/dist/antd.css";
 import { Select } from 'antd';
 import geoJsonMalaysia from "../Malaysia-coordinates/malaysia-level-1.geo.json";
-import geoJsonMalaysiaByStates from "../Malaysia-coordinates/malaysia-level-2.geo.json";
-// import johorCoor from "../Malaysia-coordinates/johor.geo.json";
+// import geoJsonMalaysiaByStates from "../Malaysia-coordinates/malaysia-level-2.geo.json";
+
 
 import { GeoJsonService } from '../services/geoJsonService';
+import ShowHospitals from './hospitals-points';
 
 
 
 const defaultCenter: any = [1.5574127, 110.3439862];
 const defaultZoom = 6;
 
-const arrState = [[5.4021302, 102.0635972], [2.0229012, 103.3147721]];
 
 
 const MapContainerLeaflet: React.FC = () => {
@@ -32,60 +31,54 @@ const MapContainerLeaflet: React.FC = () => {
 
     // Selected State and Distict from combobox
     const [selectedState, setSelectedState] = useState("" as string);
-    const [selectedDistrict, setSelectedDistrict] = useState(0);
+    const [selectedDistrict, setSelectedDistrict] = useState();
 
     // Current geoJson to draw on the leaflet map
     const [geoJson, setGeoJson] = useState(defaultCoor);
-    const [geoJsonKey, setGeoJsonKey] = useState(0);  // => hack for leaflet to force to redraw the geoJson
+    const [geoJsonKey, setGeoJsonKey] = useState("");  // => hack for leaflet to force to redraw the geoJson
 
     const mapRef: any = React.createRef();
+    const arrGeoJson = [[2.0229012,103.3147721],[5.8098265,100.6715035],[5.4021302,102.0635972]]
+  
+
+    const geoJsonRef: any  = React.createRef();
 
     let geoJsonService = new GeoJsonService();
+    useEffect(() => {
+        (async () => {
+            let state = await geoJsonService.getState();
+            setStateNamesList(state[0])
+            setGeoJson(state[1]);
+         
+        })();
+    }, []);
 
     useEffect(() => {
         (async () => {
             let states = await geoJsonService.getStates(selectedState);
             setDistinctnamesList(states[0]);
             setGeoJson(states[1]);
-            redrawGeoJson();
         })();
     }, [selectedState]);
 
-    useEffect(() => {
-        (async () => {
-            let state = await geoJsonService.getState();
-            setStateNamesList(state[0])
-            setGeoJson(state[1]);
+    
 
-        })();
-    }, []);
-
-
-    const onStateChanged = (value: string) => {
+    const onStateChanged = (value: any) => {
         setSelectedState(value);
+        setGeoJsonKey(value);
 
-
-        // mapRef.current.flyTo(arrState[value], 8, {
-        //     duration: 2
-        // });
+        mapRef.current.flyTo(arrGeoJson[value], 8, {
+            duration: 3
+        });
     };
 
     const onDistrictChanged = (value: any) => {
-        setSelectedDistrict(value)
-        console.log(value, "district");
-
+        setSelectedDistrict(value);
+        setGeoJsonKey(value)
     };
 
-    const redrawGeoJson = () => {
-        setGeoJsonKey(geoJsonKey + 1)
-    }
 
-    const onButtonClicked = () => {
 
-        setGeoJson(geoJsonMalaysiaByStates)
-        redrawGeoJson();
-
-    }
 
     return (
 
@@ -124,11 +117,11 @@ const MapContainerLeaflet: React.FC = () => {
                     </LayersControl.BaseLayer>
                 </LayersControl>
 
-                <GeoJSON key={geoJsonKey} data={geoJson} />
-
+                <GeoJSON key={geoJsonKey} data={geoJson[selectedState]} />
+                <ShowHospitals/>
             </MapContainer>
             <div className="sidebar">
-                <h2 className="sidebar-title">USA</h2>
+                <h1 className="sidebar-title">Malaysia </h1>
                 <div style={{ display: "flex", padding: "2em" }}>
                     <h5 style={{ marginRight: "30px" }}>Select to states:</h5>
                     <Select
@@ -138,8 +131,8 @@ const MapContainerLeaflet: React.FC = () => {
                         onChange={onStateChanged}
                         style={{ width: 200 }}
                     >
-                        {stateNamesList.map((item) => (
-                            <Option value={item}>{item}</Option>
+                        {stateNamesList.map((item, index) => (
+                            <Option value={index}>{item}</Option>
                         ))}
                     </Select>
                 </div>
@@ -157,8 +150,6 @@ const MapContainerLeaflet: React.FC = () => {
                         ))}
                     </Select>
                 </div>
-
-                <button onClick={onButtonClicked} >ChangeGeoJson </button>
 
             </div>
 

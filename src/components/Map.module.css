@@ -15,9 +15,9 @@
     width: 30vw;
     padding-top: 30px;
 }
-
-.sidebar-title {
-    margin-left: 27px;
+h1 {
+    margin-left: 30px;
+padding-top: 10px;
 }
 
 .sidebar h2,
